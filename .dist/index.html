@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Sentiment Analyzer</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,400;0,900;1,800&family=Merriweather+Sans:ital,wght@0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,400;0,900;1,800&family=Merriweather+Sans:ital,wght@0,300;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="navbar-brand" href="#">
+      <img
+        src="https://cdn2.iconfinder.com/data/icons/social-media-2285/512/1_Twitter_colored_svg-512.png"
+        width="30"
+        height="30"
+        class="d-inline-block align-top"
+        alt=""
+      />
+      SA FOR TWITTER</a
+    >
+    <div class="container" style="justify-content: center; margin-top: 30px">
+      <h1>Sentiment Analyzer For Twitter</h1>
+      <textarea
+        placeholder="Enter Your Text"
+        id="textInput"
+        rows="6"
+        cols="65"
+      ></textarea>
+      <!-- <button onclick="analyzeText()">Analyze</button> -->
+      <button type="button" id="predict-btn" ">
+        Send
+      </button>
+      <p
+        id="text-result"
+        style="
+          font-size: 50px;
+          font-family: 'Merriweather Sans', sans-serif;
+          padding: 50px;
+        "
+      ></p>
+    </div>
+
+    <!-- <script src="script.js"></script> -->
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      //    const textInput = document.getElementById('input');
+      const predictBtn = document.getElementById("predict-btn");
+      const inputElement = document.getElementById("textInput");
+      const textResult = document.getElementById("text-result");
+
+      predictBtn.addEventListener("click", (event) => {
+        var inputValue = inputElement.value;
+        console.log(inputValue);
+        fetchPrediction(inputValue);
+      });
+
+      inputElement.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13 || event.key === "Enter") {
+          var inputValue = inputElement.value;
+          console.log(inputValue);
+          fetchPrediction(inputValue);
+          event.preventDefault();
+        }
+      });
+
+      function fetchPrediction(text) {
+        const data = {
+    "str":text
+};
+        fetch("http://localhost:5000/api/sentimentClass", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const tnp = data["res"]
+            
+            if (tnp['result']== "Positive") {
+              textResult.style.color = "green";
+            } else if (tnp['result'] == "Negative") {
+              resultElement.className = "negative";
+            } else {
+              textResult.style.color = "blue";
+            }
+            textResult.textContent = tnp['result'];
+            
+            console.log();
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      }
+    });
+  </script>
+</html>
